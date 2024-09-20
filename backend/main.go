@@ -22,12 +22,12 @@ func main() {
 
     router.Use(middleware.Authentication())
 
+    // API-2
+    router.GET("/api-1", func(c *gin.Context) {
 
-	// defer func() {
-	// 	if err := database.Client.Disconnect(context.TODO()); err != nil {
-	// 		panic(err)
-	// 	}
-	// }()
+        c.JSON(200, gin.H{"success": "Access granted for api-1"})
+
+    })
 
     // API-1
     router.GET("/api-2", func(c *gin.Context) {
