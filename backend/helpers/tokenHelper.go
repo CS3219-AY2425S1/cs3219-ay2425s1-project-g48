@@ -19,8 +19,7 @@ import (
 // SignedDetails
 type SignedDetails struct {
     Email      string
-    First_name string
-    Last_name  string
+    Name string
     Uid        string
     jwt.StandardClaims
 }
@@ -30,12 +29,11 @@ var userCollection *mongo.Collection = database.OpenCollection(database.Client, 
 var SECRET_KEY string = os.Getenv("SECRET_KEY")
 
 // GenerateAllTokens generates both teh detailed token and refresh token
-func GenerateAllTokens(email string, firstName string, lastName string, uid string) (signedToken string, signedRefreshToken string, err error) {
+func GenerateAllTokens(email string, name string, uid string) (signedToken string, signedRefreshToken string, err error) {
     claims := &SignedDetails{
-        Email:      email,
-        First_name: firstName,
-        Last_name:  lastName,
-        Uid:        uid,
+        Email: email,
+        Name: name,
+        Uid: uid,
         StandardClaims: jwt.StandardClaims{
             ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
         },
@@ -90,11 +88,13 @@ func ValidateToken(signedToken string) (claims *SignedDetails, msg string) {
 }
 
 //UpdateAllTokens renews the user tokens when they login
-func UpdateAllTokens(signedToken string, signedRefreshToken string, userId string) {
+func UpdateAllTokens(signedToken string, signedRefreshToken string, userId string, signedEmail string, signedName string, signedPassword string) {
     var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 
     var updateObj primitive.D
-
+    updateObj = append(updateObj, bson.E{"name", signedName})
+    updateObj = append(updateObj, bson.E{"password", signedPassword})
+    updateObj = append(updateObj, bson.E{"email", signedEmail})
     updateObj = append(updateObj, bson.E{"token", signedToken})
     updateObj = append(updateObj, bson.E{"refresh_token", signedRefreshToken})
 

@@ -22,7 +22,7 @@ import (
     "golang.org/x/crypto/bcrypt"
 )
 
-var userCollection *mongo.Collection = database.OpenCollection(database.Client, "user")
+var userCollection *mongo.Collection = database.OpenCollection(database.Client, "user_accounts")
 var validate = validator.New()
 
 //HashPassword is used to encrypt the password before it is stored in the DB
@@ -77,16 +77,8 @@ func SignUp() gin.HandlerFunc {
         password := HashPassword(*user.Password)
         user.Password = &password
 
-        count, err = userCollection.CountDocuments(ctx, bson.M{"phone": user.Phone})
-        defer cancel()
-        if err != nil {
-            log.Panic(err)
-            c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while checking for the phone number"})
-            return
-        }
-
         if count > 0 {
-            c.JSON(http.StatusInternalServerError, gin.H{"error": "this email or phone number already exists"})
+            c.JSON(http.StatusInternalServerError, gin.H{"error": "this email already exists"})
             return
         }
 
@@ -94,7 +86,7 @@ func SignUp() gin.HandlerFunc {
         user.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
         user.ID = primitive.NewObjectID()
         user.User_id = user.ID.Hex()
-        token, refreshToken, _ := helper.GenerateAllTokens(*user.Email, *user.First_name, *user.Last_name, user.User_id)
+        token, refreshToken, _ := helper.GenerateAllTokens(*user.Email, *user.Name, user.User_id)
         user.Token = &token
         user.Refresh_token = &refreshToken
 
@@ -137,9 +129,9 @@ func Login() gin.HandlerFunc {
             return
         }
 
-        token, refreshToken, _ := helper.GenerateAllTokens(*foundUser.Email, *foundUser.First_name, *foundUser.Last_name, foundUser.User_id)
+        token, refreshToken, _ := helper.GenerateAllTokens(*foundUser.Email, *foundUser.Name, foundUser.User_id)
 
-        helper.UpdateAllTokens(token, refreshToken, foundUser.User_id)
+        helper.UpdateAllTokens(token, refreshToken, foundUser.User_id, *foundUser.Email, *foundUser.Name, *foundUser.Password)
 
         c.JSON(http.StatusOK, foundUser)
 
