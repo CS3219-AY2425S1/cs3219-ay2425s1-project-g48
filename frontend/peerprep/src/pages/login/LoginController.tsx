@@ -15,7 +15,18 @@ const LoginController: React.FC = () => {
     }
   };
 
-  return <LoginView onSubmit={handleLogin} errorMessage={errorMessage} />;
+  const handleCreateAccount = () => {
+    console.log("Create account clicked");
+    // You can handle the view switch here, or pass the prop to App component
+  };
+
+  return (
+    <LoginView
+      onSubmit={handleLogin}
+      onCreateAccount={handleCreateAccount} // Pass the prop here
+      errorMessage={errorMessage}
+    />
+  );
 };
 
 export default LoginController;
