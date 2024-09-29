@@ -16,14 +16,14 @@ import {
     Td,
 } from '@chakra-ui/react';
 
-type ReusableTableProps<T> = {
+type DataTableProps<T> = {
     columns: ColumnDef<T>[];
     data: T[];
     columnFilters: any[];
     setColumnFilters: (filters: any[]) => void;
 };
 
-const DataTable = <T,>({ columns, data, columnFilters, setColumnFilters }: ReusableTableProps<T>) => {
+const DataTable = <T,>({ columns, data, columnFilters, setColumnFilters }: DataTableProps<T>) => {
     const table = useReactTable({
         data,
         columns,
