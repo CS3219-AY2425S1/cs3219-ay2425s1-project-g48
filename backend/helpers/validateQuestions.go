@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -16,6 +17,12 @@ func ParseQuestionForDb(question *models.Question) {
 	question.Title	= strings.ToLower(question.Title)
 }
 
+func CreateUniqueIdQuestion(question *models.Question) {
+	objectId := primitive.NewObjectID()
+	idStr := objectId.Hex()
+
+	question.ID = idStr
+}
 
 // Validation functions for questions
 func IsQuestionFieldsEmpty(question *models.Question) bool {

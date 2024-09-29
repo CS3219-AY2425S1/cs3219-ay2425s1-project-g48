@@ -4,6 +4,7 @@ import (
 	"backend/database"
 	helper "backend/helpers"
 	"backend/models"
+	"log"
 
 	"context"
 	"fmt"
@@ -223,6 +224,7 @@ func AddQuestionToDb() gin.HandlerFunc {
 		}
 
 		helper.ParseQuestionForDb(&question)
+		helper.CreateUniqueIdQuestion(&question)
 
 		_, err := coll.InsertOne(ctx, question)
 		if err != nil {
@@ -276,7 +278,7 @@ func UpdateQuestion(c *gin.Context) {
 func DeleteQuestion(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
 	defer cancel()
-
+  
 	var jsonBody map[string]int
 	if err := c.ShouldBindJSON(&jsonBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request body"})
