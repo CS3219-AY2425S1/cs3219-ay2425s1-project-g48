@@ -1,7 +1,7 @@
 package helper
 
 import (
-	"backend/models"
+	"backend/questions/models"
 	"context"
 
 	"strings"
@@ -14,7 +14,7 @@ import (
 // Parse question object to be put in db
 func ParseQuestionForDb(question *models.Question) {
 	question.Complexity = strings.ToLower(question.Complexity)
-	question.Title	= strings.ToLower(question.Title)
+	question.Title = strings.ToLower(question.Title)
 }
 
 // func CreateUniqueIdQuestion(question *models.Question) {
@@ -29,7 +29,6 @@ func IsQuestionFieldsEmpty(question *models.Question) bool {
 	return question.Title != "" && question.Description != "" &&
 		question.Categories != "" && question.Complexity != "" && question.Link != ""
 }
-
 
 func IsValidComplexity(question *models.Question) bool {
 	complexity := question.Complexity
@@ -47,7 +46,6 @@ func HasDuplicateTitle(question *models.Question, coll *mongo.Collection, ctx co
 	var db_question models.Question
 
 	err := coll.FindOne(ctx, bson.M{"title": strings.ToLower(question.Title)}).Decode(&db_question)
-	
-	return err != nil 
-}
 
+	return err != nil
+}

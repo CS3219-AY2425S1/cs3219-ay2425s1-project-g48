@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"backend/database"
-	helper "backend/helpers"
-	"backend/models"
+	helper "backend/questions/helpers"
+	"backend/questions/models"
 
 	"context"
 	"fmt"
@@ -89,27 +89,27 @@ func GetQuestionsById(c *gin.Context) {
 		return
 	}
 
-	 var results []map[string]interface{}
-    
-    for curr.Next(context.TODO()) {
-        var question models.Question
-        err := curr.Decode(&question)
-        if err != nil {
-            return
-        }
-        
-        // Convert ObjectID to string
-        result := map[string]interface{}{
-            "ID":          question.ID.Hex(),  // Convert ObjectID to string
-            "Title":       question.Title,
-            "Description": question.Description,
-            "Categories":  question.Categories,
-            "Complexity":  question.Complexity,
-            "Link":        question.Link,
-        }
-        
-        results = append(results, result)
-    }
+	var results []map[string]interface{}
+
+	for curr.Next(context.TODO()) {
+		var question models.Question
+		err := curr.Decode(&question)
+		if err != nil {
+			return
+		}
+
+		// Convert ObjectID to string
+		result := map[string]interface{}{
+			"ID":          question.ID.Hex(), // Convert ObjectID to string
+			"Title":       question.Title,
+			"Description": question.Description,
+			"Categories":  question.Categories,
+			"Complexity":  question.Complexity,
+			"Link":        question.Link,
+		}
+
+		results = append(results, result)
+	}
 
 	// curr.All(ctx, &questions)
 	c.JSON(http.StatusOK, gin.H{"message": "Questions retrieve successfully", "questions": results})
@@ -217,7 +217,7 @@ func DeleteQuestion(c *gin.Context) {
 	id := c.Query("id")
 
 	if id == "" {
- 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request body"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request body"})
 		return
 	}
 
@@ -232,7 +232,7 @@ func DeleteQuestion(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid question id"})
 		return
-	} 
+	}
 
 	filter := bson.M{"_id": objectId}
 	result, err := coll.DeleteOne(ctx, filter)

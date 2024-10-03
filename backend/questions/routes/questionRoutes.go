@@ -1,7 +1,7 @@
 package routes
 
 import (
-	controller "backend/controllers"
+	controller "backend/questions/controllers"
 
 	"github.com/gin-gonic/gin"
 )

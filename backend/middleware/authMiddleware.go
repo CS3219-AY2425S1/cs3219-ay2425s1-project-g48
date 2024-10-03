@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	helper "backend/helpers"
+	helper "backend/users/helpers"
 
 	"github.com/gin-gonic/gin"
 )
