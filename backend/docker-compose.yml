@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  mongo_db:
+    container_name: db_container
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_db:/data/db
+
+  user_service:
+    container_name: user_service
+    build: ./PeerPrep-UserService-main/user-service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongo_db
+
+  question_service:
+    container_name: question_service
+    build: ./QuestionService
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongo_db
+
+  frontend:
+    container_name: frontend_service
+    build:
+      context: ../frontend/peerprep # Path to the React app (peerprep)
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - PORT=5173
+    depends_on:
+      - user_service # Frontend waits for user_service to be up
+
+volumes:
+  mongo_db: {}
