@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  mongo_db:
+    container_name: db_container
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_db:/data/db
+
+  user_service:
+    container_name: user_service
+    build: . # this will look for the Dockerfile in the current directory
+    ports:
+      - "3001:3001"
+    depends_on: # indicates to start this container after the mongo_db container is up
+      - mongo_db
+
+  frontend:
+    container_name: frontend_service
+    build:
+      context: ../../../frontend/peerprep    # Path to the React app (peerprep)
+      dockerfile: Dockerfile          
+    ports:
+      - "5173:5173"                  
+    depends_on: 
+      - user_service                 # Frontend waits for user_service to be up
+
+volumes:
+  mongo_db: {}
