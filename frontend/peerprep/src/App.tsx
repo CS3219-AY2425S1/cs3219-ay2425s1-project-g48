@@ -15,6 +15,7 @@ import ResetPasswordController from "./pages/user/controllers/ResetPasswordContr
 import PrivateRoutes from "./utils/PrivateRoutes";
 import DashboardView from "./pages/dashboard/DashboardView";
 import ProfileView from "./pages/profile/ProfileView";
+import MatchingComponent from "./pages/matching/MatchingComponent";
 import { initApi, authApi, questionApi } from "./utils/api";
 
 const App: React.FC = () => {
@@ -47,6 +48,7 @@ const App: React.FC = () => {
             <Route path="/questions" element={<QuestionController />} />
             <Route path="/dashboard" element={<DashboardView />} />
             <Route path="/profile" element={<ProfileView />} />
+            <Route path="/matching" element={<MatchingComponent />} />
           </Route>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route

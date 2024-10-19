@@ -1,9 +1,6 @@
 import React from "react";
-
 import { Menu, MenuButton, MenuList, MenuItem, Button } from "@chakra-ui/react";
-
 import { FaChevronDown } from "react-icons/fa6";
-import { menu } from "framer-motion/client";
 
 export type MenuButtonProps = {
   w?: string;
@@ -18,11 +15,13 @@ export type MenuListProps = {
 type DropdownButtonProps = {
   menuButtonProps: MenuButtonProps;
   menuListProps: MenuListProps;
+  onSelect?: (option: string) => void; 
 };
 
 const DropdownButton = ({
   menuButtonProps,
   menuListProps,
+  onSelect,
 }: DropdownButtonProps) => {
   return (
     <Menu>
@@ -43,7 +42,15 @@ const DropdownButton = ({
           </MenuButton>
           <MenuList bgColor="purple.500">
             {menuListProps.options.map((option, ind) => (
-              <MenuItem bgColor="purple.500" key={ind}>
+              <MenuItem
+                bgColor="purple.500"
+                key={ind}
+                onClick={() => {
+                  if (onSelect) {
+                    onSelect(option); 
+                  }
+                }}
+              >
                 {option}
               </MenuItem>
             ))}

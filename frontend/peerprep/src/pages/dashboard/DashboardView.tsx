@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Button, Avatar } from "@chakra-ui/react";
@@ -14,6 +14,9 @@ const DashboardView = () => {
 
   const userContext = useContext(UserContext);
   const user = userContext?.user;
+
+  const [selectedTopic, setSelectedTopic] = useState<string>("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>("");
 
   return (
     <div className="p-10 min-w-full h-screen">
@@ -49,7 +52,7 @@ const DashboardView = () => {
       </div>
       <div className="grid grid-cols-3">
         <div className="flex justify-end">
-          <Dropdown />
+          <Dropdown setSelectedTopic={setSelectedTopic} />
         </div>
         <div className="flex flex-col space-y-2 items-center">
           {difficulties.map((value, ind) => (
@@ -60,6 +63,7 @@ const DashboardView = () => {
               bgColor="purple.500"
               color="white"
               _hover={{ bgColor: "purple.600" }}
+              onClick={() => setSelectedDifficulty(value)}
             >
               {value}
             </Button>
@@ -75,6 +79,15 @@ const DashboardView = () => {
               color="white"
               _hover={{ bgColor: "purple.600" }}
               rightIcon={<FaArrowRight />}
+              onClick={() => {
+                if (!selectedTopic || !selectedDifficulty) {
+                  alert("Please select both a topic and difficulty.");
+                  return;
+                }
+                navigate("/matching", {
+                  state: { topic: selectedTopic, difficulty: selectedDifficulty },
+                });
+              }}
             >
               {value}
             </Button>
