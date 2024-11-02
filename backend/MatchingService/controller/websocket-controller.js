@@ -15,6 +15,10 @@ export const initializeCollaborationService = (server) => {
 
   io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
+    socket.emit("testMessage", { message: "Hello from backend!" });
+
+   
+
 
     // Handle user joining the queue
     socket.on("joinQueue", async (userData) => {
@@ -46,6 +50,10 @@ export const initializeCollaborationService = (server) => {
           message: messageData.message,
         });
       } else {
+        socket.join(room); //The issue is here, solution is need join room 
+        
+        console.log(`User ${socket.id} joined room ${room}`);
+
         console.log(
           `User ${username} is sending a message to room ${room}: ${message}`
         );
@@ -54,6 +62,7 @@ export const initializeCollaborationService = (server) => {
           username,
           message,
         });
+
       }
     });
 
@@ -88,6 +97,7 @@ export const handleUserMatch = async (job) => {
       socketId,
       "Matched user disconnected, please try again"
     );
+    
     return;
   }
 
@@ -119,7 +129,8 @@ export const notifyUserOfMatchSuccess = (socketId, socket, job, questionId) => {
     userNumber === 1
       ? `room-${socketId}-${matchedUserId}`
       : `room-${matchedUserId}-${socketId}`;
-  socket.join(room);
+      
+  
 
   // Emit the matched event with the assigned question ID
   io.to(socketId).emit("matched", {
@@ -127,6 +138,9 @@ export const notifyUserOfMatchSuccess = (socketId, socket, job, questionId) => {
     room,
     questionId, // Include the question ID in the response
   });
+
+  socket.join(room);
+  console.log(`User ${socket.id} joined room ${room}`);
 };
 
 // Notify users when the match fails or times out

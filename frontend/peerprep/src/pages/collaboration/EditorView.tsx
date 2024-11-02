@@ -32,8 +32,8 @@ const EditorView: React.FC = () => {
     }
     
     fetchQuestion();
-    socketRef.current = io("http://localhost:3004/", {
-      path: "/api",
+    socketRef.current = io("http://localhost:8080/", {
+      //path: "/api",
       query: { roomId },
     });
     const socket = socketRef.current;
@@ -43,6 +43,14 @@ const EditorView: React.FC = () => {
     socket.on("connect", () => {
       setSocketId(socket.id);
     });
+
+    socket.on("testMessage", (data) => {
+      console.log("Test message from backend:", data.message); // This should log if the connection is working
+    });
+
+    
+    
+    
 
     socket.on("assignSocketId", (data: { socketId: string }) => {
       setSocketId(data.socketId);
@@ -59,18 +67,17 @@ const EditorView: React.FC = () => {
       }
     });
 
-    socket.on(
-      "receiveMessage",
-      (data: { username: string; message: string }) => {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          `${data.username}: ${data.message}`,
-        ]);
-        if (chatBoxRef.current) {
-          chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-        }
+    socket.on("receiveMessage", (data: { username: string; message: string }) => {
+      console.log("Message received from backend:", data); // Log to check if the event is triggered
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        `${data.username}: ${data.message}`,
+      ]);
+      if (chatBoxRef.current) {
+        chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
       }
-    );
+    });
+    
 
     return () => {
       if (socketRef.current !== null) {
