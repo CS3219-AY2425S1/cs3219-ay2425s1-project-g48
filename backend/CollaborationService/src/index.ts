@@ -52,7 +52,7 @@ let roomUpdates: { [key: string]: Update[] } = {};
 let roomDocs: { [key: string]: Text } = {};
 
 // store pull update requests when version is newer than current
-let pending: ((value: any) => void)[] = [];
+let pending: { [key: string]: ((value: any) => void)[] } = {};
 
 // listening for connections from clients
 io.on("connection", (socket: Socket) => {
@@ -78,6 +78,10 @@ io.on("connection", (socket: Socket) => {
     roomDocs[roomId] = Text.of(["Start document"]);
   }
 
+  if (!pending[roomId]) {
+    pending[roomId] = [];
+  }
+
   console.log("roomUpdates", roomDocs[roomId].toString());
 
   socket.on("pullUpdates", (version: number) => {
@@ -87,7 +91,7 @@ io.on("connection", (socket: Socket) => {
         JSON.stringify(roomUpdates[roomId].slice(version))
       );
     } else {
-      pending.push((updates) => {
+      pending[roomId].push((updates) => {
         socket.emit(
           "pullUpdateResponse",
           JSON.stringify(updates.slice(version))
@@ -112,7 +116,8 @@ io.on("connection", (socket: Socket) => {
         }
         socket.emit("pushUpdateResponse", true);
 
-        while (pending.length) pending.pop()!(roomUpdates[roomId]);
+        while (pending[roomId].length)
+          pending[roomId].pop()!(roomUpdates[roomId]);
       }
     } catch (error) {
       console.error(error);
