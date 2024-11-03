@@ -1,4 +1,4 @@
-import { FaHome, FaHistory } from "react-icons/fa";
+import { FaHome } from "react-icons/fa";
 import { HiOutlineDesktopComputer } from "react-icons/hi";
 import { IoMdSettings } from "react-icons/io";
 

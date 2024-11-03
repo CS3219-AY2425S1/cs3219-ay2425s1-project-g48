@@ -27,9 +27,9 @@ const App: React.FC = () => {
     localStorage.getItem("token") ? true : false
   );
 
-  const api = initApi(setAuth);
-  const auth = authApi(setAuth);
-  const ques = questionApi(setAuth);
+  const api = initApi();
+  const auth = authApi();
+  const ques = questionApi();
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -13,7 +13,6 @@ interface LoginViewProps {
 const LoginView: React.FC<LoginViewProps> = ({
   onSubmit,
   onCreateAccount,
-  onForgotPassword,
 }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

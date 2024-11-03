@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Icon, useDisclosure } from "@chakra-ui/react";
+import { Button, Icon, useDisclosure } from "@chakra-ui/react";
 import { FiAlignJustify } from "react-icons/fi";
 import logo from "/peerprep_logo.png";
 

@@ -172,7 +172,9 @@ const EditorView: React.FC = () => {
     });
   };  
 
-  const filteredQuestion = filterQuestionByTopicAndDifficulty(questions, topic, difficulty);
+  const filteredQuestion = topic && difficulty 
+    ? filterQuestionByTopicAndDifficulty(questions, topic, difficulty) 
+    : undefined;
   console.log("question chosen: ", filteredQuestion);
 
   return (

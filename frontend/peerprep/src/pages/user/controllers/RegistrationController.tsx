@@ -11,7 +11,7 @@ interface RegisterControllerProps {
   setAuth: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const RegistrationController: React.FC<RegisterControllerProps> = ({api, setAuth}) => {
+const RegistrationController: React.FC<RegisterControllerProps> = ({api}) => {
   //const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const navigate = useNavigate();
 

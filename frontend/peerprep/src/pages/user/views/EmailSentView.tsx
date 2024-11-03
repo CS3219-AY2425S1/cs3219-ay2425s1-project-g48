@@ -14,7 +14,7 @@ const EmailSentView: React.FC<EmailSentViewProps> = ({ email, onReturnToLogin })
         <p className="text-white mb-5">
           We’ve sent a password reset link to <strong>{email}</strong>. Please check your inbox.
         </p>
-        <LargeButton text="Return to Login" onClick={onReturnToLogin} />
+        <LargeButton text="Return to Login" onClick={onReturnToLogin} isLoading={false} />
       </div>
     </div>
   );

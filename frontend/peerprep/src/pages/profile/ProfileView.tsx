@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Avatar,
   Button,
@@ -8,7 +8,6 @@ import {
   FormControl,
   FormLabel,
   useToast,
-  Checkbox,
 } from "@chakra-ui/react";
 import { useUserContext } from "../../context/UserContext";
 import InputBox from "../../components/InputBox"; // Assuming this is your custom input component

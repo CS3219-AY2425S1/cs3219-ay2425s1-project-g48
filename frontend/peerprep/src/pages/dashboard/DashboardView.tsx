@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Avatar, Text, Box, Flex, VStack, HStack } from "@chakra-ui/react";
 import { FaArrowRight } from "react-icons/fa";

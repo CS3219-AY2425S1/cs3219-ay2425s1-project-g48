@@ -1,9 +1,6 @@
 import axios, { AxiosInstance } from "axios";
-import React from "react";
 
-export const initApi = (
-  setAuth: React.Dispatch<React.SetStateAction<boolean>>
-): AxiosInstance => {
+export const initApi = (): AxiosInstance => {
   // initialise axios with setAuth in middleware
   const api = axios.create({
     baseURL: `${import.meta.env.VITE_API_URL}/v1`,
@@ -31,9 +28,7 @@ export const initApi = (
   return api;
 };
 
-export const authApi = (
-  setAuth: React.Dispatch<React.SetStateAction<boolean>>
-): AxiosInstance => {
+export const authApi = (): AxiosInstance => {
   // initialise axios with setAuth in middleware
   const api = axios.create({
     baseURL: import.meta.env.VITE_AUTH_API_URL,
@@ -61,9 +56,7 @@ export const authApi = (
   return api;
 };
 
-export const questionApi = (
-  setAuth: React.Dispatch<React.SetStateAction<boolean>>
-): AxiosInstance => {
+export const questionApi = (): AxiosInstance => {
   // initialise axios with setAuth in middleware
   const api = axios.create({
     baseURL: import.meta.env.VITE_QUES_API_URL,
