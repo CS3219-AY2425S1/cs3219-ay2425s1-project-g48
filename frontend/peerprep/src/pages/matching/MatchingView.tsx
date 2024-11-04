@@ -5,6 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
 import { useUserContext } from "../../context/UserContext";
 import { useQuesApiContext } from "../../context/ApiContext";
+import { UserContext } from "../../context/UserContext";
 
 const MatchingView: React.FC = () => {
   const navigate = useNavigate();
@@ -21,6 +22,8 @@ const MatchingView: React.FC = () => {
 
   const timerRef = useRef<number | null>(null);
 
+  sessionStorage.setItem("disconnected", "false");
+
   // Timeout handler
   // const handleTimeout = (timeTaken: number) => {
   //   setElapsedTime(timeTaken); // Capture the elapsed time
@@ -32,11 +35,19 @@ const MatchingView: React.FC = () => {
   const handleMatchFound = (room: string, questionId: string) => {
     setQueueStatus("matched");
     // setIsMatched(true); // Set match status
+    const url = `/editor?topic=${topic}&difficulty=${difficulty}&room=${room}&questionId=${questionId}`;
+    sessionStorage.setItem('reconnectUrl', url);
+    sessionStorage.setItem('userId', user.id);
+        
+    const storedUrl = sessionStorage.getItem('reconnectUrl');
+    const storedUserId = sessionStorage.getItem('userId');
+
+    console.log("Stored URL:", storedUrl);
+    console.log("Stored User ID:", storedUserId);
+
     setTimeout(() => {
       // Redirect to the collaboration room
-      navigate(
-        `/editor?topic=${topic}&difficulty=${difficulty}&room=${room}&questionId=${questionId}`
-      );
+      navigate(url);
     }, 1000);
   };
 

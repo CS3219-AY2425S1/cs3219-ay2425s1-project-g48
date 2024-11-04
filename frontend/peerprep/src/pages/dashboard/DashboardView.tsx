@@ -19,6 +19,29 @@ const DashboardView = () => {
   const [topics, setTopics] = useState<{ topic: string; difficulties: string[] }[]>([]);
   const [filteredDifficulties, setFilteredDifficulties] = useState<string[]>([]);
 
+  const [reconnectUrl, setReconnectUrl] = useState('');
+  const [isReconnectValid, setIsReconnectValid] = useState(false);
+
+  useEffect(() => {
+    const storedUrl = sessionStorage.getItem('reconnectUrl');
+    const storedUserId = sessionStorage.getItem('userId');
+
+    console.log("Stored URL:", storedUrl);
+    console.log("Stored User ID:", storedUserId);
+    console.log("Current User ID:", user.id);
+
+    if (storedUrl && storedUserId === user.id) {
+        setReconnectUrl(storedUrl);
+        setIsReconnectValid(true);
+        console.log("Reconnect valid:", true);
+    } else {
+        setIsReconnectValid(false);
+        sessionStorage.removeItem('reconnectUrl');
+        sessionStorage.removeItem('userId');
+        console.log("Reconnect valid:", false);
+    }
+}, [user.id]);
+
   // Function to fetch topics
   const fetchTopics = async () => {
     try {
@@ -162,6 +185,28 @@ const DashboardView = () => {
             </Text>
           )}
         </VStack>
+      </Flex>
+
+      {/* Reconnect Button */}
+      <Flex justify="center" mt={10}>
+        {isReconnectValid && reconnectUrl ? (
+          <Button
+            colorScheme="teal"
+            onClick={() => {
+              if (reconnectUrl) {
+                navigate(reconnectUrl);
+              } else {
+                console.warn("No reconnect URL available.");
+              }
+            }}
+          >
+            Reconnect
+          </Button>
+        ) : (
+          <Text fontWeight="bold" color="red.300" fontSize="lg">
+            No valid session to reconnect.
+          </Text>
+        )}
       </Flex>
     </Flex>
   );
