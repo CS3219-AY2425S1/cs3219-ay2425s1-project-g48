@@ -78,7 +78,7 @@ io.on("connection", (socket: Socket) => {
     roomDocs[roomId] = Text.of(["Start document"]);
   }
 
-  if(!pending[roomId]) {
+  if (!pending[roomId]) {
     pending[roomId] = [];
   }
 
@@ -116,7 +116,8 @@ io.on("connection", (socket: Socket) => {
         }
         socket.emit("pushUpdateResponse", true);
 
-        while (pending[roomId].length) pending[roomId].pop()!(roomUpdates[roomId]);
+        while (pending[roomId].length) 
+          pending[roomId].pop()!(roomUpdates[roomId]);
       }
     } catch (error) {
       console.error(error);

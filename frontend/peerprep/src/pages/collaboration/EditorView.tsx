@@ -2,26 +2,19 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import { io, Socket } from "socket.io-client";
 import { UserContext } from "../../context/UserContext";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { useQuesApiContext } from "../../context/ApiContext";
-import { Question } from "../question/questionModel";
 import EditorElement from "./EditorElement";
+import QuestionDisplay from "./QuestionDisplay";
 import ChatBox from "./ChatBox";
 
 const EditorView: React.FC = () => {
   const navigate = useNavigate();
   const socketRef = useRef<Socket | null>(null);
-  const [messages, setMessages] = useState<string[]>([]);
-  const [message, setMessage] = useState<string>("");
   const [socketId, setSocketId] = useState<string | undefined>("");
   const chatBoxRef = useRef<HTMLDivElement>(null);
   const userContext = useContext(UserContext);
   const user = userContext?.user;
 
   const [searchParams] = useSearchParams();
-  const topic = searchParams.get("topic");
-  const difficulty = searchParams.get("difficulty");
-  const [question, setQuestion] = useState<Question | null>(null);
-  const api = useQuesApiContext();
 
   const roomId = searchParams.get("room");
   const questionId = searchParams.get("questionId");
@@ -29,12 +22,16 @@ const EditorView: React.FC = () => {
   useEffect(() => {
     const disconnected = sessionStorage.getItem("disconnected");
 
-    if (disconnected === "true" || roomId === null || roomId === "" || !questionId){
+    if (
+      disconnected === "true" ||
+      roomId === null ||
+      roomId === "" ||
+      !questionId
+    ) {
       navigate("/dashboard");
       return;
     }
     
-    fetchQuestion();
     socketRef.current = io("http://localhost:3004/", {
       path: "/api",
       query: { roomId },
@@ -44,22 +41,9 @@ const EditorView: React.FC = () => {
     if (socket === null) return;
 
     socket.on("connect", () => {
+      console.log("connected");
       setSocketId(socket.id);
     });
-
-    socket.on("testMessage", (data) => {
-      console.log("Test message from backend:", data.message); // This should log if the connection is working
-    });
-
-
-    // socket.on("assignSocketId", (data: { socketId: string }) => {
-    //   setSocketId(data.socketId);
-    //   setMessages((prevMessages) => [
-    //     ...prevMessages,
-    //     `You are assigned to: ${data.socketId}`,
-    //   ]);
-    // });
-    
 
     return () => {
       if (socketRef.current !== null) {
@@ -68,25 +52,17 @@ const EditorView: React.FC = () => {
     };
   }, []);
 
-  const fetchQuestion = async () => {
-    try {
-      const response = await api.get(`/questionsById?id=${questionId}`);
-      setQuestion(response.data.questions[0]);
-      console.log(response.data.questions[0]);
-    } catch (error) {
-      console.error("Error fetching question:", error);
-    }
-  };
-
   const disconnectAndGoBack = () => {
     if (socketRef.current) {
       socketRef.current.disconnect();
     }
     sessionStorage.setItem("disconnected", "true");
-    sessionStorage.removeItem('reconnectUrl');
+    sessionStorage.removeItem("reconnectUrl");
     navigate("/dashboard");
   };
 
+  console.log(socketRef.current);
+  
   return (
     <div style={styles.container}>
       {/* Inline CSS for dark scrollbars */}
@@ -116,44 +92,19 @@ const EditorView: React.FC = () => {
       </style>
 
       {/* Question Section */}
-      {question && (
-        <div style={styles.questionSection} className="editor-scrollbar">
-          <h2 style={styles.questionTitle}>{question.Title}</h2>
-          
-          <div style={styles.questionDetail}>
-            <p><strong>Complexity:</strong> {question.Complexity}</p>
-          </div>
-
-          <h3 style={styles.questionSubheading}>Description:</h3>
-          <div style={styles.questionDetail} dangerouslySetInnerHTML={{ __html: question.Description }} />
-
-          <h3 style={styles.questionSubheading}>Categories:</h3>
-          <p style={styles.questionDetail}>{question.Categories.join(", ")}</p>
-
-          <a href={question.Link} target="_blank" rel="noopener noreferrer" style={styles.leetCodeLink}>
-            View on LeetCode
-          </a>
-        </div>
-      )}
-
+      <QuestionDisplay questionId={questionId} styles={styles} />
+      
       {/* Editor and Chat Section */}
       <div style={styles.rightSection}>
-        <div style={styles.topRight}>
-          {/* Video Section */}
-          <div style={styles.videoContainer}>
-            <div style={styles.videoPlaceholder}>Video Placeholder</div>
-          </div>
-
-          {/* Chat Section */}
-          
-            <ChatBox roomId={roomId} user={user} />
-          
-        </div>
+        {/* Chat Section */}
+        <ChatBox roomId={roomId} user={user} />
 
         {/* Editor Section */}
         <div style={styles.editorContainer} className="editor-scrollbar">
           {socketRef.current && <EditorElement socket={socketRef.current} />}
         </div>
+
+        {/* Disconnect Button */}
         <div style={styles.disconnectButtonContainer}>
           <button onClick={disconnectAndGoBack} style={styles.disconnectButton}>
             Disconnect
@@ -162,7 +113,7 @@ const EditorView: React.FC = () => {
       </div>
     </div>
   );
-};  
+};
 
 const styles = {
   questionSection: {

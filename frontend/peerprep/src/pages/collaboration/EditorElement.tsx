@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { langs } from "@uiw/codemirror-extensions-langs";
 import { basicSetup } from "@uiw/codemirror-extensions-basic-setup";
@@ -39,6 +39,12 @@ const EditorElement: React.FC<Props> = ({ socket, className }) => {
       socket.off("disconnect", handleDisconnect);
     };
   }, [socket]);
+
+  // use Memo to prevent the plugin from being reinstantiated upon rerender
+  const plugin = useMemo(
+    () => peerExtension(socket, version || 0),
+    [socket, version]
+  );
 
   return version !== null && doc !== null ? (
     <div
@@ -86,7 +92,8 @@ const EditorElement: React.FC<Props> = ({ socket, className }) => {
           indentUnit.of("\t"),
           basicSetup(),
           langs.c(),
-          peerExtension(socket, version),
+          plugin,
+          // peerExtension(socket, version),
         ]}
         value={doc}
         style={{
