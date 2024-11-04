@@ -1,5 +1,6 @@
 import Queue from "bull";
 import {
+  fetchQuestionId,
   handleUserMatch,
   notifyUserOfMatchFailed,
 } from "../controller/websocket-controller.js";
@@ -53,6 +54,9 @@ matchingQueue.process(1, async (job) => {
             `Matched users: ${job.data.username} and ${waitingJob.data.username}`
           );
 
+           // Fetch a question ID for the matched users
+          const questionId = await fetchQuestionId(job.data.topic, job.data.difficulty);
+          
           // remove and add the matched job to the front of the queue
           await matchingQueue.add(
             {
@@ -60,7 +64,7 @@ matchingQueue.process(1, async (job) => {
               topic: waitingJob.data.topic,
               difficulty: waitingJob.data.difficulty,
               socketId: waitingJob.data.socketId,
-              // questionId: waitingJob.data.questionId,
+              questionId: questionId,
               matched: true,
               matchedUser: job.data.username,
               matchedUserId: job.data.socketId,
@@ -75,7 +79,7 @@ matchingQueue.process(1, async (job) => {
             username: job.data.username,
             topic: job.data.topic,
             difficulty: job.data.difficulty,
-            // questionId: job.data.questionId,
+            questionId: questionId,
             socketId: job.data.socketId,
             matched: true,
             matchedUser: waitingJob.data.username,

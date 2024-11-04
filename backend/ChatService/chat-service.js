@@ -25,7 +25,7 @@ io.on("connection", (socket) => {
   socket.on("sendMessage", (messageData) => {
     const { room, message, username } = messageData;
 
-    if (room == "") {
+    if (room === "") {
       // If no room specified, broadcast the message to all connected clients
       socket.broadcast.emit("receiveMessage", {
         username: messageData.username,
@@ -36,10 +36,12 @@ io.on("connection", (socket) => {
       socket.join(room);
       console.log(`Chat user ${socket.id} joined room ${room}`);
       
+      const questionId = roomQuestionMapping[room];
       // Emit the message to all clients in the same room
       io.to(room).emit("receiveMessage", {
         username,
         message,
+        questionId,
       });
     }
   });

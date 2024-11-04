@@ -4,7 +4,6 @@ import { matchingQueue } from "../queue/matching-queue.js";
 import axios from 'axios';
 let io;
 
-// Set up socket.io and handle user interactions
 export const initializeCollaborationService = (server) => {
   io = new Server(server, {
     cors: {
@@ -24,9 +23,8 @@ export const initializeCollaborationService = (server) => {
     socket.on("joinQueue", async (userData) => {
       socket.emit("assignSocketId", { socketId: socket.id });
 
-      // Add the user to the matching queue with socketId for later communication
+    
       try {
-        console.log(userData)
         const resp = await addUserToQueue(userData, socket);
         socket.emit("queueEntered", resp);
       } catch (err) {
@@ -35,15 +33,15 @@ export const initializeCollaborationService = (server) => {
           error: "Failed to join the queue, please try again",
         });
       }
-      // Notify the user they've joined the queue
+    
     });
 
     // // Handle message sending and broadcasting to other users
-    // // Handle sending a message to a room
+   
     // socket.on("sendMessage", (messageData) => {
     //   const { room, message, username } = messageData;
 
-    //   if (room == "") {
+    //   if (room === "") {
     //     // Broadcast the message to all other connected users
     //     socket.broadcast.emit("receiveMessage", {
     //       username: messageData.username,
@@ -57,10 +55,13 @@ export const initializeCollaborationService = (server) => {
     //     console.log(
     //       `User ${username} is sending a message to room ${room}: ${message}`
     //     );
-    //     // Send the message to all users in the same room
+    //     // Include the question ID from the room mapping when emitting the message
+          //const questionId = roomQuestionMapping[room];
     //     io.to(room).emit("receiveMessage", {
     //       username,
     //       message,
+            //questionId,
+    
     //     });
 
     //   }
@@ -91,39 +92,34 @@ export const handleUserMatch = async (job) => {
   const userSocket = io.sockets.sockets.get(socketId);
   const matchedUserSocket = io.sockets.sockets.get(matchedUserId);
 
-  // Check if matched user socket is available
-  if (matchedUserSocket === undefined) {
-    notifyUserOfMatchFailed(
-      socketId,
-      "Matched user disconnected, please try again"
-    );
-    
+  if (!matchedUserSocket) {
+    notifyUserOfMatchFailed(socketId, "Matched user disconnected, please try again");
     return;
   }
 
-  // Proceed if user socket is valid
+  
   if (userSocket) {
-    // Call the question service to assign a question
-    try {
-      const response = await axios.post('http://question_service:3002/questions/matching', {
-        category: job.data.topic,
-        complexity: job.data.difficulty,
-      });
-      console.log(response.data); // Handle the response
+    notifyUserOfMatchSuccess(socketId, userSocket, job);
+  }
+};
 
-      // Notify user of match success and provide the assigned question ID
-      notifyUserOfMatchSuccess(socketId, userSocket, job, response.data.question_id);
-    } catch (error) {
-      console.error("Error assigning question:", error);
-      notifyUserOfMatchFailed(socketId, "Error assigning question. Please try again.");
-    }
+export const fetchQuestionId = async (topic, difficulty) => {
+  try {
+    const response = await axios.post('http://question_service:3002/questions/matching', {
+      category: topic,
+      complexity: difficulty,
+    });
+
+    return response.data.question_id; // Return the fetched question ID
+  } catch (error) {
+    console.error("Error fetching question ID:", error);
+    throw new Error("Failed to fetch question. Please try again."); // Throw an error to handle it at the call site
   }
 };
 
 
-// Update the notifyUserOfMatchSuccess to also accept the question ID
-export const notifyUserOfMatchSuccess = (socketId, socket, job, questionId) => {
-  const { matchedUser, userNumber, matchedUserId } = job.data;
+export const notifyUserOfMatchSuccess = (socketId, socket, job) => {
+  const { matchedUser, userNumber, matchedUserId, questionId} = job.data;
 
   const room =
     userNumber === 1

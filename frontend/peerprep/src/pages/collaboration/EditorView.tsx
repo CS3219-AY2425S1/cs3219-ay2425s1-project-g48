@@ -52,13 +52,13 @@ const EditorView: React.FC = () => {
     });
 
 
-    socket.on("assignSocketId", (data: { socketId: string }) => {
-      setSocketId(data.socketId);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        `You are assigned to: ${data.socketId}`,
-      ]);
-    });
+    // socket.on("assignSocketId", (data: { socketId: string }) => {
+    //   setSocketId(data.socketId);
+    //   setMessages((prevMessages) => [
+    //     ...prevMessages,
+    //     `You are assigned to: ${data.socketId}`,
+    //   ]);
+    // });
     
 
     return () => {
