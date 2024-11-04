@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: user-service
+  name: redis
   namespace: peerprep
 spec:
   selector:
-    app: user-service
+    app: redis
   ports:
     - protocol: TCP
-      port: 3001
-      nodePort: 32658
-  type: NodePort
+      port: 6173
+      # nodePort: 32657
+  type: ClusterIP
