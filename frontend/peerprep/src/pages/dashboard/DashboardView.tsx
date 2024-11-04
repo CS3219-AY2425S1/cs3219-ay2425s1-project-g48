@@ -97,7 +97,7 @@ const DashboardView = () => {
         <Flex className="bg-white bg-opacity-10" align="center" justify="space-between" px={20} py={10} borderRadius="xl">
           <Flex direction="column" mr={10}>
             <Text fontSize="5xl" fontWeight="bold" textAlign="center">
-              12/20
+              {user.questions.length}/20
             </Text>
             <Text fontSize="3xl" fontWeight="bold" textAlign="center">
               questions
@@ -112,7 +112,7 @@ const DashboardView = () => {
             variant="outline"
             color="purple.300"
             _hover={{ bgColor: "purple.50" }}
-            onClick={() => navigate("/questions")}
+            onClick={() => navigate("/history")}
           >
             View
           </Button>

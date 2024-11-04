@@ -1,6 +1,7 @@
 import express from "express";
 
 import {
+  addQuestionToUser,
   createUser,
   deleteUser,
   getAllUsers,
@@ -23,5 +24,7 @@ router.get("/:id", verifyAccessToken, verifyIsOwnerOrAdmin, getUser);
 router.patch("/:id", verifyAccessToken, verifyIsOwnerOrAdmin, updateUser);
 
 router.delete("/:id", verifyAccessToken, verifyIsOwnerOrAdmin, deleteUser);
+
+router.post("/:id/questions", addQuestionToUser);
 
 export default router;

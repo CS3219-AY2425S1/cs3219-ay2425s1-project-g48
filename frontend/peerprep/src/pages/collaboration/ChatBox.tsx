@@ -16,7 +16,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ roomId, user }) => {
   const socketRef = useRef<Socket | null>(null); // Ref to store the socket instance
 
   useEffect(() => {
-    // Initialize the socket connection to the chat service on port 8081
+    // Initialize the socket connection once
     socketRef.current = io(socketUrl);
 
     socketRef.current.on("connect", () => {

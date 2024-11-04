@@ -3,19 +3,30 @@ import axios, { AxiosInstance } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useQuery, QueryObserverResult } from "@tanstack/react-query";
 
+export type UserQuestion = {
+  questionId: string;
+  title: string;
+  description: string;
+  complexity: string;
+  categories: string[];
+  link: string;
+  attempt: string;
+  completionDate?: string;
+};
+
 export type User = {
   id: string;
   username: string;
   email: string;
   isAdmin: boolean;
-  createdAt: string; // You can use Date if it's parsed as a date
-  // questions_done: number[] | null; (TODO)
+  createdAt: string;
+  questions: UserQuestion[]; // Add questions_done field
 };
 
 export type UserContextType = {
   user: User;
   status: "pending" | "error" | "success";
-  refetch: () => Promise<QueryObserverResult<any, Error>>; // Refetch function
+  refetch: () => Promise<QueryObserverResult<any, Error>>;
 };
 
 export const UserContext = createContext<UserContextType | null>(null);
@@ -49,7 +60,7 @@ export const UserProvider = ({
       if (axios.isAxiosError(error)) {
         throw new Error(
           error.response?.data?.message ||
-            "An error occurred while fetching user data"
+          "An error occurred while fetching user data"
         );
       } else {
         console.error("Unknown error: ", error);
@@ -71,6 +82,7 @@ export const UserProvider = ({
       email: "",
       isAdmin: false,
       createdAt: "",
+      questions: [],
     },
   });
 

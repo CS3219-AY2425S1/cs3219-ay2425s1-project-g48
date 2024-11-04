@@ -36,12 +36,12 @@ io.on("connection", (socket) => {
       socket.join(room);
       console.log(`Chat user ${socket.id} joined room ${room}`);
       
-      const questionId = roomQuestionMapping[room];
+      //const questionId = roomQuestionMapping[room];
       // Emit the message to all clients in the same room
       io.to(room).emit("receiveMessage", {
         username,
         message,
-        questionId,
+        //questionId,
       });
     }
   });

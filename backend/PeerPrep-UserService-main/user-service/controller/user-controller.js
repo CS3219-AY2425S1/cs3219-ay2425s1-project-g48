@@ -12,9 +12,23 @@ import {
   updateUserPrivilegeById as _updateUserPrivilegeById,
 } from "../model/repository.js";
 
+// Utility to format user response
+export function formatUserResponse(user) {
+  return {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    isAdmin: user.isAdmin,
+    createdAt: user.createdAt,
+    questions: user.questions,
+  };
+}
+
+// Create a new user
 export async function createUser(req, res) {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password } = req.body; // Accept questions array
+
     if (username && email && password) {
       const existingUser = await _findUserByUsernameOrEmail(username, email);
       if (existingUser) {
@@ -37,6 +51,7 @@ export async function createUser(req, res) {
   }
 }
 
+// Get a user by ID
 export async function getUser(req, res) {
   try {
     const userId = req.params.id;
@@ -56,17 +71,22 @@ export async function getUser(req, res) {
   }
 }
 
+// Get all users
 export async function getAllUsers(req, res) {
   try {
     const users = await _findAllUsers();
 
-    return res.status(200).json({ message: `Found users`, data: users.map(formatUserResponse) });
+    return res.status(200).json({
+      message: `Found users`,
+      data: users.map(formatUserResponse), // Include questions for each user
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Unknown error when getting all users!" });
   }
 }
 
+// Update a user's data
 export async function updateUser(req, res) {
   try {
     const { username, email, password } = req.body;
@@ -101,7 +121,7 @@ export async function updateUser(req, res) {
         data: formatUserResponse(updatedUser),
       });
     } else {
-      return res.status(400).json({ message: "No field to update: username and email and password are all missing!" });
+      return res.status(400).json({ message: "No field to update: username, email, password, and questions are all missing!" });
     }
   } catch (err) {
     console.error(err);
@@ -109,11 +129,12 @@ export async function updateUser(req, res) {
   }
 }
 
+// Update user's privilege (isAdmin)
 export async function updateUserPrivilege(req, res) {
   try {
     const { isAdmin } = req.body;
 
-    if (isAdmin !== undefined) {  // isAdmin can have boolean value true or false
+    if (isAdmin !== undefined) {
       const userId = req.params.id;
       if (!isValidObjectId(userId)) {
         return res.status(404).json({ message: `User ${userId} not found` });
@@ -137,6 +158,7 @@ export async function updateUserPrivilege(req, res) {
   }
 }
 
+// Delete a user
 export async function deleteUser(req, res) {
   try {
     const userId = req.params.id;
@@ -156,12 +178,33 @@ export async function deleteUser(req, res) {
   }
 }
 
-export function formatUserResponse(user) {
-  return {
-    id: user.id,
-    username: user.username,
-    email: user.email,
-    isAdmin: user.isAdmin,
-    createdAt: user.createdAt,
-  };
+// Add a question to a user's profile
+export async function addQuestionToUser(req, res) {
+  try {
+    const userId = req.params.id;
+    const { question } = req.body; // The question to add
+
+    if (!isValidObjectId(userId)) {
+      return res.status(404).json({ message: `User ${userId} not found` });
+    }
+
+    const user = await _findUserById(userId);
+    if (!user) {
+      return res.status(404).json({ message: `User ${userId} not found` });
+    }
+
+    // Add the new question to the questions array
+    user.questions.push(question);
+
+    // Save the updated user document
+    await user.save();
+
+    return res.status(200).json({
+      message: `Added question to user ${userId}`,
+      data: formatUserResponse(user),
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Unknown error when adding question to user!" });
+  }
 }

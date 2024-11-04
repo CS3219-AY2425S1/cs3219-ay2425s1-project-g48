@@ -39,4 +39,10 @@ export const menuItems = [
     color: "white",
     route: "/profile",
   },
+  {
+    label: "History",
+    icon: FaHistory,
+    color: "white",
+    route: "/history",
+  },
 ];

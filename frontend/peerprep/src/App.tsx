@@ -18,6 +18,7 @@ import ProfileView from "./pages/profile/ProfileView";
 import { initApi, authApi, questionApi } from "./utils/api";
 import MatchingView from "./pages/matching/MatchingView";
 import EditorView from "./pages/collaboration/EditorView";
+import HistoryController from "./pages/history/HistoryController";
 
 const App: React.FC = () => {
   const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App: React.FC = () => {
           >
             {/* Put axios api instance into a context */}
             <Route path="/questions" element={<QuestionController />} />
+            <Route path="/history" element={<HistoryController />} />
             <Route path="/dashboard" element={<DashboardView />} />
             <Route path="/profile" element={<ProfileView />} />
             <Route path="/matching" element={<MatchingView />} />

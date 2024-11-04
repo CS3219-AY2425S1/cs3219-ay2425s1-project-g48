@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuesApiContext } from "../../context/ApiContext";
 import { Question } from "../question/questionModel";
 
-const QuestionDisplay = ({ questionId, styles }) => {
+const QuestionDisplay = ({ questionId, styles, onFetchQuestion }) => {
   const api = useQuesApiContext();
   const [question, setQuestion] = useState<Question | null>(null);
 
@@ -14,6 +14,7 @@ const QuestionDisplay = ({ questionId, styles }) => {
     try {
       const response = await api.get(`/questionsById?id=${questionId}`);
       setQuestion(response.data.questions[0]);
+      onFetchQuestion(response.data.questions[0]);
       console.log(response.data.questions[0]);
     } catch (error) {
       console.error("Error fetching question:", error);
