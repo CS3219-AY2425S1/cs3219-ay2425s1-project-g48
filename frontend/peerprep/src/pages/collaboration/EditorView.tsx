@@ -5,6 +5,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useQuesApiContext } from "../../context/ApiContext";
 import { Question } from "../question/questionModel";
 import EditorElement from "./EditorElement";
+import ChatBox from "./ChatBox";
 
 const EditorView: React.FC = () => {
   const navigate = useNavigate();
@@ -32,8 +33,8 @@ const EditorView: React.FC = () => {
     }
     
     fetchQuestion();
-    socketRef.current = io("http://localhost:8080/", {
-      //path: "/api",
+    socketRef.current = io("http://localhost:3004/", {
+      path: "/api",
       query: { roomId },
     });
     const socket = socketRef.current;
@@ -48,9 +49,6 @@ const EditorView: React.FC = () => {
       console.log("Test message from backend:", data.message); // This should log if the connection is working
     });
 
-    
-    
-    
 
     socket.on("assignSocketId", (data: { socketId: string }) => {
       setSocketId(data.socketId);
@@ -58,24 +56,6 @@ const EditorView: React.FC = () => {
         ...prevMessages,
         `You are assigned to: ${data.socketId}`,
       ]);
-    });
-
-    socket.on("message", (data: string) => {
-      setMessages((prevMessages) => [...prevMessages, data]);
-      if (chatBoxRef.current) {
-        chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-      }
-    });
-
-    socket.on("receiveMessage", (data: { username: string; message: string }) => {
-      console.log("Message received from backend:", data); // Log to check if the event is triggered
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        `${data.username}: ${data.message}`,
-      ]);
-      if (chatBoxRef.current) {
-        chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-      }
     });
     
 
@@ -93,18 +73,6 @@ const EditorView: React.FC = () => {
       console.log(response.data.questions[0]);
     } catch (error) {
       console.error("Error fetching question:", error);
-    }
-  };
-
-  const sendMessage = () => {
-    if (message.trim() && socketRef) {
-      socketRef.current?.emit("sendMessage", {
-        room: roomId,
-        message,
-        username: user?.username,
-      });
-      setMessages((prevMessages) => [...prevMessages, `You: ${message}`]);
-      setMessage("");
     }
   };
 
@@ -166,28 +134,9 @@ const EditorView: React.FC = () => {
           </div>
 
           {/* Chat Section */}
-          <div style={styles.chatContainer} className="editor-scrollbar">
-            <div ref={chatBoxRef} style={styles.chatBox} className="editor-scrollbar">
-              {messages.map((msg, index) => (
-                <div key={index} style={styles.message}>{msg}</div>
-              ))}
-            </div>
-            <div style={styles.socketIdDisplay}>
-              {socketId && <div>Your Socket ID: {socketId}</div>}
-            </div>
-            <div style={styles.messageInputContainer}>
-              <input
-                type="text"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Message"
-                style={styles.input}
-              />
-              <button onClick={sendMessage} style={styles.sendButton}>
-                Send
-              </button>
-            </div>
-          </div>
+          
+            <ChatBox roomId={roomId} user={user} />
+          
         </div>
 
         {/* Editor Section */}

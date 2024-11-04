@@ -38,33 +38,33 @@ export const initializeCollaborationService = (server) => {
       // Notify the user they've joined the queue
     });
 
-    // Handle message sending and broadcasting to other users
-    // Handle sending a message to a room
-    socket.on("sendMessage", (messageData) => {
-      const { room, message, username } = messageData;
+    // // Handle message sending and broadcasting to other users
+    // // Handle sending a message to a room
+    // socket.on("sendMessage", (messageData) => {
+    //   const { room, message, username } = messageData;
 
-      if (room == "") {
-        // Broadcast the message to all other connected users
-        socket.broadcast.emit("receiveMessage", {
-          username: messageData.username,
-          message: messageData.message,
-        });
-      } else {
-        socket.join(room); //The issue is here, solution is need join room 
+    //   if (room == "") {
+    //     // Broadcast the message to all other connected users
+    //     socket.broadcast.emit("receiveMessage", {
+    //       username: messageData.username,
+    //       message: messageData.message,
+    //     });
+    //   } else {
+    //     socket.join(room); //The issue is here, solution is need join room 
         
-        console.log(`User ${socket.id} joined room ${room}`);
+    //     console.log(`User ${socket.id} joined room ${room}`);
 
-        console.log(
-          `User ${username} is sending a message to room ${room}: ${message}`
-        );
-        // Send the message to all users in the same room
-        io.to(room).emit("receiveMessage", {
-          username,
-          message,
-        });
+    //     console.log(
+    //       `User ${username} is sending a message to room ${room}: ${message}`
+    //     );
+    //     // Send the message to all users in the same room
+    //     io.to(room).emit("receiveMessage", {
+    //       username,
+    //       message,
+    //     });
 
-      }
-    });
+    //   }
+    // });
 
     // Handle disconnection
     socket.on("disconnect", async () => {
