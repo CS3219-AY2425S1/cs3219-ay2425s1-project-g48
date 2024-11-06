@@ -9,11 +9,6 @@ spec:
   selector:
     matchLabels:
       app: user-service
-  # strategy:
-  #   rollingUpdate:
-  #     maxSurge: 25%
-  #     maxUnavailable: 25%
-  #   type: RollingUpdate
   template:
     metadata:
       labels:
@@ -22,7 +17,7 @@ spec:
       containers:
         - image: asia-southeast1-docker.pkg.dev/peerprep-440902/peerprep/user-service
           name: user-service
-      ports:
-        - containerPort: 80
+          ports:
+            - containerPort: 3001
       restartPolicy: Always
 status: {}
