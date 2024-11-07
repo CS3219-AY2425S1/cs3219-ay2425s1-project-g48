@@ -18,12 +18,5 @@ spec:
       containers:
         - image: asia-southeast1-docker.pkg.dev/peerprep-440902/peerprep/client-peerprep
           name: client-peerprep
-          resources:
-            requests:
-              memory: "1Gi"
-              cpu: "500m"
-            limits:
-              memory: "1Gi"
-              cpu: "1000m"
       restartPolicy: Always
 status: {}
