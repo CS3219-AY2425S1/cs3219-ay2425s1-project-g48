@@ -4,6 +4,7 @@ metadata:
   labels:
     app: user-service
   name: user-service
+  namespace: peerprep
 spec:
   replicas: 1
   selector:
@@ -16,8 +17,15 @@ spec:
     spec:
       containers:
         - image: asia-southeast1-docker.pkg.dev/peerprep-440902/peerprep/user-service
+          imagePullPolicy: Always
           name: user-service
-          ports:
-            - containerPort: 3001
+          resources:
+            requests:
+              cpu: "250m" # Minimum CPU request (e.g., 250 milliCPU)
+              memory: "512Mi" # Minimum memory request
+            limits:
+              cpu: "500m" # Maximum CPU limit
+              memory: "1Gi" # Maximum memory limit
       restartPolicy: Always
+
 status: {}
