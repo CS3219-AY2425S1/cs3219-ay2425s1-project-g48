@@ -4,7 +4,7 @@ metadata:
   name: peerprep-gateway
   namespace: peerprep
 spec:
-  gatewayClassName: gke-l7-global-external
+  gatewayClassName: gke-l7-global-external-managed
   listeners:
     - name: http
       protocol: HTTP

@@ -19,6 +19,25 @@ spec:
         - image: asia-southeast1-docker.pkg.dev/peerprep-440902/peerprep/user-service
           imagePullPolicy: Always
           name: user-service
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          readinessProbe:
+            httpGet:
+              path: /user # Adjust based on your application
+              port: 3001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health # Alternatively, define an endpoint like /health
+              port: 3001
+            initialDelaySeconds: 15
+            periodSeconds: 20
       restartPolicy: Always
 
 status: {}
