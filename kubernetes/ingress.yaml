@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: peerprep-ingress
+  namespace: peerprep
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+spec:
+  rules:
+    - host: peerprep.com
+      http:
+        paths:
+          - path: /user
+            pathType: Prefix
+            backend:
+              service:
+                name: user-service
+                port:
+                  number: 3001
+          - path: /question
+            backend:
+              service:
+                name: my-discounted-products
+                port:
+                  number: 80
