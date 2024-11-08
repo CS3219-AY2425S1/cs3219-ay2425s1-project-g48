@@ -1,18 +1,16 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: peerprep-ingress
+  name: peerprep-ingress-socket
   namespace: peerprep
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/cors-allow-origin: "http://localhost:5173"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type, Authorization, token"
     nginx.ingress.kubernetes.io/websocket-services: "matching-service"
 spec:
   ingressClassName: nginx
@@ -20,20 +18,6 @@ spec:
     - host: peerprep.com
       http:
         paths:
-          - path: /user/(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: user-service
-                port:
-                  number: 3001
-          - path: /question/(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: question-service
-                port:
-                  number: 3002
           - path: /matching/(.*)
             pathType: ImplementationSpecific
             backend:

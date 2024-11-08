@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: matching-service
+  name: matching-service
+  namespace: peerprep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matching-service
+  template:
+    metadata:
+      labels:
+        app: matching-service
+    spec:
+      containers:
+        - image: asia-southeast1-docker.pkg.dev/peerprep-440902/peerprep/matching-service
+          name: matching-service
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+      restartPolicy: Always
+status: {}
