@@ -37,15 +37,8 @@ app.get("/", (req, res, next) => {
   });
 });
 
-app.use("/user/users", userRoutes);
-app.use("/user/auth", authRoutes);
-
-app.get("/user", (req, res, next) => {
-  console.log("Sending Greetings!");
-  res.json({
-    message: "Hello World from user-service",
-  });
-});
+app.use("/users", userRoutes);
+app.use("/auth", authRoutes);
 
 // Handle When No Route Match Is Found
 app.use((req, res, next) => {

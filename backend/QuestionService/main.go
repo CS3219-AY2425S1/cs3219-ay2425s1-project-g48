@@ -31,7 +31,7 @@ func main() {
 	}))
 
 	// get page for route /
-	router.GET("/question", func(c *gin.Context) {
+	router.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "Welcome to Question Service blah blah",
 		})

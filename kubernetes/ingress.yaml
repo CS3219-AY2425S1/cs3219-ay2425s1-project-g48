@@ -4,21 +4,23 @@ metadata:
   name: peerprep-ingress
   namespace: peerprep
   annotations:
-    kubernetes.io/ingress.class: "gce"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
+  ingressClassName: nginx
   rules:
     - host: peerprep.com
       http:
         paths:
-          - path: /user
-            pathType: Prefix
+          - path: /user(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: user-service
                 port:
                   number: 3001
-          - path: /question
-            pathType: Prefix
+          - path: /question(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: question-service
