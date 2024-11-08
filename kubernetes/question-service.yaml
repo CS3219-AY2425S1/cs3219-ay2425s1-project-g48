@@ -9,4 +9,5 @@ spec:
   ports:
     - protocol: TCP
       port: 3002
-  type: ClusterIP
+      targetPort: 3002
+  type: NodePort

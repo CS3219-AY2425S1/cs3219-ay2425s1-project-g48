@@ -18,8 +18,9 @@ spec:
                 port:
                   number: 3001
           - path: /question
+            pathType: Prefix
             backend:
               service:
-                name: my-discounted-products
+                name: question-service
                 port:
-                  number: 80
+                  number: 3002
