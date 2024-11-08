@@ -39,7 +39,7 @@ const PrivateRoutes = ({
       </AuthApiContext.Provider>
     </ApiContext.Provider>
   ) : (
-    <Navigate to="/login" />
+    <Navigate to="/login" replace />
   );
 };
 
