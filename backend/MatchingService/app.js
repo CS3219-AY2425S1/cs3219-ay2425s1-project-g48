@@ -16,7 +16,7 @@ import cors from "cors";
 import { initializeCollaborationService } from "./controller/websocket-controller.js"; // Adjusted path
 
 const app = express();
-const port = 8080;
+const PORT = process.env.PORT || 8080;
 
 // Set up bull dashboard for monitoring queue
 const serverAdapter = new ExpressAdapter();
@@ -53,21 +53,25 @@ app.post("/queue", addUserToQueueReq);
 
 app.get("/remove", obliberateQueue);
 
-// Create an HTTP server to use with Socket.IO
-const server = http.createServer(app);
+const FRONT_END = process.env.FRONTEND_URL || "http://localhost:5173";
+
+console.log("FRONT_END", FRONT_END);
+console.log("PORT", PORT);
 
 // Enable CORS for your API
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: FRONT_END,
     methods: ["GET", "POST"],
     credentials: true, // Set to true if you are using credentials (cookies, etc.)
   })
 );
 
-// Initialize the collaboration service
+// Create an HTTP server to use with Socket.IO
+const server = http.createServer(app);
+
 initializeCollaborationService(server);
 
-server.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+server.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}`);
 });

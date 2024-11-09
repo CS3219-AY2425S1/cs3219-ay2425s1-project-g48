@@ -71,13 +71,21 @@ const MatchingView: React.FC = () => {
       return;
     }
 
-    setStatus("Starting Ccnnection...");
+    setStatus("Starting Connection...");
 
     const url = import.meta.env.VITE_MATCH_API_URL;
-    // Initialize the WebSocket connection
-    socketRef.current = io(url);
-    const socket = socketRef.current;
+    const path =
+      import.meta.env.VITE_ENV === "DEV" ? "/socket.io" : "/matching/socket.io";
 
+    console.log("path", path);
+    // Initialize the , WebSocket connection
+    socketRef.current = io(url, {
+      path: path,
+      autoConnect: false,
+      transports: ["polling", "websocket"], // required
+    });
+
+    const socket = socketRef.current;
     if (socket === null) {
       return;
     }

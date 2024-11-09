@@ -7,13 +7,10 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: matching-service
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/cors-allow-origin: "http://localhost:5173"
-    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
-    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS"
-    nginx.ingress.kubernetes.io/websocket-services: "matching-service"
 spec:
   ingressClassName: nginx
   rules:
@@ -35,13 +32,6 @@ spec:
                 port:
                   number: 3002
           - path: /matching/(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: matching-service
-                port:
-                  number: 8080
-          - path: /matching/socket.io/(.*)
             pathType: ImplementationSpecific
             backend:
               service:

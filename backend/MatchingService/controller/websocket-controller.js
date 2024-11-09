@@ -1,14 +1,18 @@
-import { Server } from "socket.io";
 import { addUserToQueue } from "./queue-controller.js";
 import { matchingQueue } from "../queue/matching-queue.js";
 import axios from "axios";
 let io;
+import { Server } from "socket.io";
 
 export const initializeCollaborationService = (server) => {
-  io = new Server(server, {
+  const FRONTEND = process.env.FRONTEND_URL || "http://localhost:5173";
+  // Initialize the collaboration service
+  const io = new Server(server, {
+    path: "/socket.io",
     cors: {
-      origin: "http://localhost:5173",
+      origin: FRONTEND,
       methods: ["GET", "POST"],
+      allowedHeaders: ["Content-Type", "Authorization", "token"],
     },
   });
 
@@ -93,13 +97,13 @@ export const handleUserMatch = async (job) => {
 
 export const fetchQuestionId = async (topic, difficulty) => {
   try {
-    const response = await axios.post(
-      "http://question_service:3002/questions/matching",
-      {
-        category: topic,
-        complexity: difficulty,
-      }
-    );
+    const QUESTION_HOST =
+      process.env.QUESTION_SERVICE_URL || "http://localhost:3002";
+    const QUESTION_URL = `${QUESTION_HOST}/questions/matching`;
+    const response = await axios.post(QUESTION_URL, {
+      category: topic,
+      complexity: difficulty,
+    });
 
     return response.data.question_id; // Return the fetched question ID
   } catch (error) {

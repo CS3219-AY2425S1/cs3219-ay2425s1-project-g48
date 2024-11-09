@@ -17,6 +17,14 @@ const matchingQueue = new Queue("matching", {
   },
 });
 
+matchingQueue.on("ready", () => {
+  console.log("Matching queue is connected to Redis.");
+});
+
+matchingQueue.on("error", (error) => {
+  console.error("Failed to connect matching queue to Redis:", error);
+});
+
 // Cleanup jobs from queue
 setInterval(async () => {
   await matchingQueue.clean(10000, "completed"); // clear jobs completed for 10 seconds
@@ -54,9 +62,12 @@ matchingQueue.process(1, async (job) => {
             `Matched users: ${job.data.username} and ${waitingJob.data.username}`
           );
 
-           // Fetch a question ID for the matched users
-          const questionId = await fetchQuestionId(job.data.topic, job.data.difficulty);
-          
+          // Fetch a question ID for the matched users
+          const questionId = await fetchQuestionId(
+            job.data.topic,
+            job.data.difficulty
+          );
+
           // remove and add the matched job to the front of the queue
           await matchingQueue.add(
             {
