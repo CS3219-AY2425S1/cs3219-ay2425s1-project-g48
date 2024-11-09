@@ -19,19 +19,19 @@ app.get("/", (req, res) => {
 });
 
 // using ioredis for socket.io due to problems stated in documentation for socket io adapter
-const redisClient = new Redis(
-  process.env.ENV === "DEV"
-    ? process.env.REDIS_URL || ""
-    : "redis://127.0.0.1:6379"
-);
+// const redisClient = new Redis(
+//   process.env.ENV === "DEV"
+//     ? process.env.REDIS_URL || ""
+//     : "redis://127.0.0.1:6379"
+// );
 
-redisClient.on("connect", () => {
-  console.log("Connected to Redis:", process.env.REDIS_URL);
-});
+// redisClient.on("connect", () => {
+//   console.log("Connected to Redis:", process.env.REDIS_URL);
+// });
 
 // create redis adapter for socket.io for horizontal scaling
-const subClient = redisClient.duplicate();
-const pubClient = redisClient.duplicate();
+// const subClient = redisClient.duplicate();
+// const pubClient = redisClient.duplicate();
 
 // functions to update redis storage
 
@@ -41,7 +41,7 @@ let io = new Server(server, {
     origin: process.env.FRONTEND_URL,
     methods: ["GET", "POST"],
   },
-  adapter: createAdapter(pubClient, subClient),
+  // adapter: createAdapter(pubClient, subClient),
 });
 
 // The updates received so far (updates.length gives the current

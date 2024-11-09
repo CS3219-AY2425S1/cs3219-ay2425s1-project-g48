@@ -41,3 +41,10 @@ spec:
                 name: matching-service
                 port:
                   number: 8080
+          - path: /matching/socket.io/(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: matching-service
+                port:
+                  number: 8080
