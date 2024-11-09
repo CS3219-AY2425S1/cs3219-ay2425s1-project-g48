@@ -24,15 +24,47 @@ setInterval(async () => {
 }, 360000);
 
 // Process the queue
-matchingQueue.process(1, async (job) => {
+matchingQueue.process(2, async (job) => {
   // Simulate a processing delay (for testing purposes)
-
   try {
-    // Get delayed jobs first
-    const delayedJobs = await matchingQueue.getDelayed();
+    const activeJobs = await matchingQueue.getActive();
     if (job.data.matched == true) {
       return "Job matched";
     }
+
+    for (const activeJob of activeJobs) {
+      if(activeJob.username === job.username) {
+        continue;
+      }
+      
+      if (job.data.topic == activeJob.data.topic) {
+        if (job.data.difficulty == activeJob.data.difficulty) {
+          console.log(
+            `Matched users: ${job.data.username} and ${activeJob.data.username}`
+          );
+
+          // Fetch a question ID for the matched users
+          const questionId = await fetchQuestionId(job.data.topic, job.data.difficulty);
+          
+          await job.update({
+            username: job.data.username,
+            topic: job.data.topic,
+            difficulty: job.data.difficulty,
+            questionId: questionId,
+            socketId: job.data.socketId,
+            matched: true,
+            matchedUser: activeJob.data.username,
+            matchedUserId: activeJob.data.socketId,
+            userNumber: 1,
+          });
+
+          return "Job matched";
+        }
+      }
+    }
+
+    // Get delayed jobs first
+    const delayedJobs = await matchingQueue.getDelayed();
 
     for (const delayedJob of delayedJobs) {
       // if found match
@@ -54,7 +86,7 @@ matchingQueue.process(1, async (job) => {
             `Matched users: ${job.data.username} and ${waitingJob.data.username}`
           );
 
-           // Fetch a question ID for the matched users
+          // Fetch a question ID for the matched users
           const questionId = await fetchQuestionId(job.data.topic, job.data.difficulty);
           
           // remove and add the matched job to the front of the queue
