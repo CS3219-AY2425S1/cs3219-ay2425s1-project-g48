@@ -33,10 +33,10 @@ matchingQueue.process(2, async (job) => {
     }
 
     for (const activeJob of activeJobs) {
-      if(activeJob.username === job.username) {
+      if (activeJob.data.username === job.data.username) {
         continue;
       }
-      
+
       if (job.data.topic == activeJob.data.topic) {
         if (job.data.difficulty == activeJob.data.difficulty) {
           console.log(
@@ -44,8 +44,23 @@ matchingQueue.process(2, async (job) => {
           );
 
           // Fetch a question ID for the matched users
-          const questionId = await fetchQuestionId(job.data.topic, job.data.difficulty);
-          
+          const questionId = await fetchQuestionId(
+            job.data.topic,
+            job.data.difficulty
+          );
+
+          await activeJob.update({
+            username: activeJob.data.username,
+            topic: activeJob.data.topic,
+            difficulty: activeJob.data.difficulty,
+            questionId: questionId,
+            socketId: activeJob.data.socketId,
+            matched: true,
+            matchedUser: job.data.username,
+            matchedUserId: job.data.socketId,
+            userNumber: 2,
+          });
+
           await job.update({
             username: job.data.username,
             topic: job.data.topic,
@@ -57,6 +72,9 @@ matchingQueue.process(2, async (job) => {
             matchedUserId: activeJob.data.socketId,
             userNumber: 1,
           });
+
+          await activeJob.moveToCompleted();
+          await job.moveToCompleted();
 
           return "Job matched";
         }
@@ -87,8 +105,11 @@ matchingQueue.process(2, async (job) => {
           );
 
           // Fetch a question ID for the matched users
-          const questionId = await fetchQuestionId(job.data.topic, job.data.difficulty);
-          
+          const questionId = await fetchQuestionId(
+            job.data.topic,
+            job.data.difficulty
+          );
+
           // remove and add the matched job to the front of the queue
           await matchingQueue.add(
             {
