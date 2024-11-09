@@ -24,7 +24,7 @@ setInterval(async () => {
 }, 360000);
 
 // Process the queue
-matchingQueue.process(2, async (job) => {
+matchingQueue.process(10, async (job) => {
   // Simulate a processing delay (for testing purposes)
   try {
     const activeJobs = await matchingQueue.getActive();
@@ -128,7 +128,7 @@ matchingQueue.process(2, async (job) => {
 
           await waitingJob.remove();
 
-          job.update({
+          await job.update({
             username: job.data.username,
             topic: job.data.topic,
             difficulty: job.data.difficulty,
