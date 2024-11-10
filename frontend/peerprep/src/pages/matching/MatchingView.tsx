@@ -139,6 +139,20 @@ const MatchingView: React.FC = () => {
     };
   }, []); // Add elapsedTime to dependencies
 
+  const resetMatchingProcess = () => {
+    setQueueStatus("loading");
+    setElapsedTime(0);
+    setStatus("Starting connection...");
+    if (socketRef.current) {
+      socketRef.current.emit("joinQueue", {
+        username: user.username,
+        topic: topic,
+        difficulty: difficulty,
+      });
+    }
+    handleStartTimer(); // Start the timer again
+  };
+
   return (
     <Box
       display="flex"
@@ -208,7 +222,7 @@ const MatchingView: React.FC = () => {
           <Button
             mt={4}
             colorScheme="purple"
-            onClick={() => window.location.reload()}
+            onClick={resetMatchingProcess}
           >
             Try Again
           </Button>

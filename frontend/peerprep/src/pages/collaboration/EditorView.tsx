@@ -76,6 +76,7 @@ const EditorView: React.FC = () => {
     question: Question | null,
     currentCode: string
   ) => {
+    console.log(currentCode);
     if (question && currentCode && user) {
       const userQuestion = {
         questionId: question.ID,
