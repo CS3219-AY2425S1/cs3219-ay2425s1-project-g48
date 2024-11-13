@@ -1,0 +1,94 @@
+services:
+  redis:
+    container_name: redis
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  mongo_db:
+    container_name: db-container
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_db:/data/db
+
+  matching-service:
+    container_name: matching-service
+    build: ./MatchingService
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    develop:
+      watch:
+        - action: sync
+          path: ./MatchingService
+          target: ./app
+        - path: ./MatchingService
+          action: rebuild
+
+  collaboration-service:
+    container_name: collaboration-service
+    build: ./CollaborationService
+    ports:
+      - "3004:3004"
+    depends_on:
+      - redis
+
+  user-service:
+    container_name: user-service
+    build: ./PeerPrep-UserService-main/user-service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongo_db
+    develop:
+      watch:
+        - action: sync
+          path: ./PeerPrep-UserService-main/user-service
+          target: ./app
+        - path: ./PeerPrep-UserService-main/user-service
+          action: rebuild
+
+  question-service:
+    container_name: question-service
+    build: ./QuestionService
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongo_db
+    develop:
+      watch:
+        - action: sync
+          path: ./QuestionService
+          target: ./app
+        - path: ./QuestionService
+          action: rebuild
+
+  frontend:
+    container_name: frontend-service
+    build:
+      context: ../frontend/peerprep
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - PORT=5173
+    depends_on:
+      - user-service
+    develop:
+      watch:
+        - action: sync
+          path: ../frontend/peerprep
+          target: ./app
+        - path: ../frontend/peerprep/package.json
+          action: rebuild
+
+volumes:
+  mongo_db: {}
+  redis_data: {}

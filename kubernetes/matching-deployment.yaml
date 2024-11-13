@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: matching-service
+  name: matching-service
+  namespace: peerprep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matching-service
+  template:
+    metadata:
+      labels:
+        app: matching-service
+    spec:
+      containers:
+        - image: asia-southeast1-docker.pkg.dev/peerprep-440902/peerprep/matching-service-new
+          imagePullPolicy: Always
+          name: matching-service
+      restartPolicy: Always
+status: {}

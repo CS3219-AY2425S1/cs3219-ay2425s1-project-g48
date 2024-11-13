@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: collab-service
+  namespace: peerprep
+spec:
+  selector:
+    app: collab-service
+  ports:
+    - protocol: "TCP"
+      port: 3004
+      targetPort: 3004
+  type: ClusterIP

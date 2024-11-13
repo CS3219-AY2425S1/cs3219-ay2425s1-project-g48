@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: question-service
+  name: question-service
+  namespace: peerprep
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: question-service
+  template:
+    metadata:
+      labels:
+        app: question-service
+    spec:
+      containers:
+        - image: asia-southeast1-docker.pkg.dev/peerprep-440902/peerprep/question-service-new
+          name: question-service
+      restartPolicy: Always
+status: {}

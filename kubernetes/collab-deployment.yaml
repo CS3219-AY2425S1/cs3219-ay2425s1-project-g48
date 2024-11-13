@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: collab-service
+  name: collab-service
+  namespace: peerprep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: collab-service
+  template:
+    metadata:
+      labels:
+        app: collab-service
+    spec:
+      containers:
+        - image: asia-southeast1-docker.pkg.dev/peerprep-440902/peerprep/collab-service
+          imagePullPolicy: Always
+          name: collab-service
+      restartPolicy: Always
+status: {}
