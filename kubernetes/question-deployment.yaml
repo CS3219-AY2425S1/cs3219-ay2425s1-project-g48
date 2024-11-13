@@ -16,7 +16,7 @@ spec:
         app: question-service
     spec:
       containers:
-        - image: asia-southeast1-docker.pkg.dev/peerprep-440902/peerprep/question-service
+        - image: asia-southeast1-docker.pkg.dev/peerprep-440902/peerprep/question-service-new
           name: question-service
       restartPolicy: Always
 status: {}
