@@ -123,7 +123,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     const notificationMessages = [
       "You have joined the chat room. Say hello!",
       "Your partner has disconnected",
-      "Start chatting to find out who you are paired with!"
+      "Your partner has connected. Let’s chat!"
     ];
   
     return messages.map((msg, index) => {
